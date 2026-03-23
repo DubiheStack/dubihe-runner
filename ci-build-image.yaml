@@ -1,0 +1,50 @@
+sources:
+  repo_1:
+    branch: master
+    certificate:
+      id: '1854176219709837312'
+    cloneDepth: 1
+    endpoint: http://101.35.145.87/grail/grail-demo.git
+    submodule: true
+    type: code
+stages:
+  Java_build:
+    name: Java构建
+    jobs:
+      java_build@ArtifactUpload:
+        name: Java构建上传Job
+        steps:
+          - step: Command
+            key: echo_step
+            name: echo_step
+            with:
+              run: |-
+                echo "dubihe runner node: ${NODE_NAME}"
+                echo "dubihe workspace: ${WORKSPACE}"
+                echo "name: ${name}"
+          - step: Command
+            key: java_maven_build
+            name: java_maven_build
+            with:
+              run: |-
+                export JAVA_HOME=$(/usr/libexec/java_home -v 1.8.0_371)
+                export PATH="/opt/homebrew/bin:$JAVA_HOME/bin:$PATH"
+                mvn -B clean package -Dmaven.test.skip=true -Dautoconfig.skip
+          - step: buildImage
+            key: build_image_step
+            name: Build Docker Image
+            with:
+              language: java
+              tool: jar
+              jar: ./grail-demo-start/target/grail-demo-start-1.0.0-SNAPSHOT.jar
+              appName: grail-demo
+              operator: xujin
+              packageVersion: 20250826184602
+              publishBillId: 415
+              callBackUrl: http://121.4.50.183:8090/api/v1/buildImage/build
+              serverUrl: http://121.4.50.183:8090
+              environment: fat
+              skipPrepare: false
+variables:
+  name: 张三
+  JAVA_HOME: /Library/Java/JavaVirtualMachines/jdk-1.8.jdk/Contents/Home

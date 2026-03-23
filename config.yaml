@@ -1,0 +1,22 @@
+uid: 8ce743f4606c4d2fbd166bdab4e8bf32
+url: http://localhost:8080
+token: 8ea69bee9483492ab2478bc8f320df5d
+tenant: b5ee9caf54631317ff2a5932cbf7777a
+hostUid: 1714169232784625664
+type: exe
+version: 1.0.0
+heartbeatInterval: 30  # 心跳时间，Runner与服务端发起心跳的时间间隔
+scanInterval: 15       # runner扫描拉取Job的间隔时间
+concurrency: 3
+autoUpgrade: true
+upgradeInterval: 300
+workDir: ./workspace
+logConfig:
+  logType: wonder
+  batchSubmitLines: 200
+  refreshDuration: 1000
+  flushDuration: 5000
+  logFile: ./workspace/log/dubihe-runner.log
+devMode: true
+# License配置路径，如果没有配置则使用默认路径
+licensePath: ./distribution/license/license

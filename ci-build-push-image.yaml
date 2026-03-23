@@ -1,0 +1,55 @@
+sources:
+  repo_1:
+    branch: master
+    certificate:
+      id: '1854176219709837312'
+    cloneDepth: 1
+    endpoint: http://101.65.175.43/grail/grail-demo.git
+    submodule: true
+    type: code
+stages:
+  Java_build:
+    name: Java构建
+    jobs:
+      java_build@ArtifactUpload:
+        name: Java构建上传Job
+        #runsOn:
+        #  container: alinux3:latest
+        steps:
+          - step: Command
+            key: echo_step
+            name: echo_step
+            with:
+              run: |-
+                echo "dubihe runner node: ${NODE_NAME}"
+                echo "dubihe workspace: ${WORKSPACE}"
+                echo "name: ${name}"
+          - step: Command
+            key: java_maven_build
+            name: java_maven_build
+            with:
+              run: |-
+                export JAVA_HOME=$(/usr/libexec/java_home -v 1.8.0_371)
+                export PATH="/opt/homebrew/bin:$JAVA_HOME/bin:$PATH"
+                mvn -B clean package -Dmaven.test.skip=true -Dautoconfig.skip
+          - step: artifactUploadOss
+            key: artifact_upload_oss_step
+            name: Artifact Upload to OSS
+            with:
+              codePath: ./grail-demo-start/target/grail-demo-start-1.0.0-SNAPSHOT.jar
+              callBackUrl: http://127.0.0.1/test
+              packageVersion: v1.0.0
+              publishBillId: 111111111111
+              appName: grail-demo
+              operator: xujin
+              environment: dev
+              ossType: aliyun
+              accessKeyId: 
+              accessKeySecret: 
+              endpoint: oss-cn-shanghai.aliyuncs.com
+              bucketName: 
+              bathUrl: vmdeploy.oss-cn-shanghai.aliyuncs.com
+
+variables:
+  name: 张三
+  JAVA_HOME: /Library/Java/JavaVirtualMachines/jdk-1.8.jdk/Contents/Home
